@@ -1,7 +1,11 @@
 import json
+import logging
 import os
 from typing import Dict, List
 
+from models import DbSearchResult
+
+logger = logging.getLogger(__name__)
 
 class SpaceDB:
     def __init__(self):
@@ -36,3 +40,28 @@ class SpaceDB:
     def get_all_sources(self) -> List[Dict]:
         """Get all space sources."""
         return self._sources
+
+    def search(self, keywords: List[str]) -> List[DbSearchResult]:
+        """Return sources that contain any of the provided keywords."""
+
+        if not keywords:
+            logger.debug("DB search: no keywords provided")
+            return []
+
+        matches: List[DbSearchResult] = []
+
+        for source in self._sources:
+            name = source["name"].lower()
+            description = source.get("description", "").lower()
+
+            if any(keyword in name or keyword in description for keyword in keywords):
+                matches.append({
+                    **source,
+                    "name_matches": len([keyword for keyword in keywords if keyword in name]),
+                    "description_matches": len([keyword for keyword in keywords if keyword in description]),
+                })
+
+        logger.debug(
+            f"Found {len(matches)} matching sources for keywords: {', '.join(keywords)}"
+        )
+        return matches
