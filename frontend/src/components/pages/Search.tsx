@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import axios from 'axios';
-import ImageCard from './ImageCard';
-import PaginatedPage from './PaginatedPage';
-import { PaginatedResponse, SearchResult } from '../types';
+import ImageCard from '../ImageCard/ImageCard';
+import PaginatedPage from '../PaginatedPage';
+import { PaginatedResponse, SearchResult } from '../../types';
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState('');

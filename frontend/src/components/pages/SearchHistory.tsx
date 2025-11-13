@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import axios from 'axios';
-import { PaginatedResponse, SearchHistory as SearchHistoryType } from '../types';
-import { eyeIcon, trashIcon } from '../icons';
-import PaginatedPage from './PaginatedPage';
+import { PaginatedResponse, SearchHistory as SearchHistoryType } from '../../types';
+import { eyeIcon, trashIcon } from '../../icons';
+import PaginatedPage from '../PaginatedPage';
 import SearchHistoryDetail from './SearchHistoryDetail';
 
 const SearchHistory: React.FC = () => {

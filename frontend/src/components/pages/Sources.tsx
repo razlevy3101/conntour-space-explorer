@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import axios from 'axios';
-import { PaginatedResponse, Source } from '../types';
-import ImageCard from './ImageCard';
-import PaginatedPage from './PaginatedPage';
+import { PaginatedResponse, Source } from '../../types';
+import ImageCard from '../ImageCard/ImageCard';
+import PaginatedPage from '../PaginatedPage';
 
 const Sources: React.FC = () => {
   const fetchSourcesPage = useCallback(async (page: number): Promise<PaginatedResponse<Source>> => {

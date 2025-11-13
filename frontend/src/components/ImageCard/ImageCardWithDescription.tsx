@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Source, SearchResult } from '../types';
-import { closeIcon } from '../icons';
+import { Tooltip } from 'react-tooltip';
+import { Source, SearchResult } from '../../types';
+import { DescriptionModal } from './DescriptionModal';
 
 type ImageCardItem = Source | SearchResult;
 
@@ -8,43 +9,16 @@ interface ImageCardProps {
   image: ImageCardItem;
 }
 
-interface DescriptionModalProps {
-  description: string;
-  onClose: () => void;
-}
-
 const isSearchResult = (item: ImageCardItem): item is SearchResult => {
   return 'confidence_score' in item;
 };
 
-const DescriptionModal: React.FC<DescriptionModalProps> = ({
-  description,
-  onClose,
-}) => {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
-      <div className="max-w-lg w-full rounded-lg bg-white p-6 shadow-xl">
-        <div className="mb-4 flex items-start justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Description</h3>
-          <button
-            type="button"
-            className="rounded-full p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            onClick={onClose}
-            aria-label="Close description modal"
-          >
-            {closeIcon}
-          </button>
-        </div>
-        <p className="text-gray-700 whitespace-pre-line">{description}</p>
-      </div>
-    </div>
-  );
-};
-
-const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
+const ImageCardWithDescription: React.FC<ImageCardProps> = ({ image }) => {
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
   const description = image.description ?? '';
   const hasDescription = description.trim().length > 0;
+  const tooltipId = `tooltip-${image.id}`;
+  const descriptionTooltipId = `tooltip-description-${image.id}`;
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -63,7 +37,24 @@ const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
         </a>
       )}
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-2">{image.name}</h2>
+        <h2 
+          className="text-xl font-semibold mb-2 cursor-help line-clamp-3"
+          data-tooltip-id={tooltipId}
+          data-tooltip-content={image.name}
+        >
+          {image.name}
+        </h2>
+        <Tooltip 
+          id={tooltipId} 
+          place="top"
+          style={{ 
+            backgroundColor: '#1f2937', 
+            color: '#fff',
+            maxWidth: '300px',
+            wordWrap: 'break-word',
+            zIndex: 50
+          }}
+        />
         {isSearchResult(image) && (
           <span className="text-sm font-medium text-blue-600">
             {image.confidence_score.toFixed(1)}% match
@@ -73,12 +64,25 @@ const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
           <>
             <button
               type="button"
-              className="w-full text-left text-gray-600 mb-2 line-clamp-3 focus:outline-none hover:text-gray-800"
+              className="w-full text-left text-gray-600 mb-2 line-clamp-3 focus:outline-none hover:text-gray-800 cursor-help"
               onClick={() => setIsDescriptionModalOpen(true)}
               aria-label="View full description"
+              data-tooltip-id={descriptionTooltipId}
+              data-tooltip-content={description}
             >
               {description}
             </button>
+            <Tooltip 
+              id={descriptionTooltipId} 
+              place="top"
+              style={{ 
+                backgroundColor: '#1f2937', 
+                color: '#fff',
+                maxWidth: '300px',
+                wordWrap: 'break-word',
+                zIndex: 50
+              }}
+            />
             {isDescriptionModalOpen && (
               <DescriptionModal
                 description={description}
@@ -95,4 +99,4 @@ const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
   );
 };
 
-export default ImageCard; 
+export default ImageCardWithDescription; 

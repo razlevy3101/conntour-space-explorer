@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
-import { PaginatedResponse, SearchHistory, SearchResult } from '../types';
-import ImageCard from './ImageCard';
-import PaginatedPage from './PaginatedPage';
-import { closeIcon } from '../icons';
+import { PaginatedResponse, SearchHistory, SearchResult } from '../../types';
+import ImageCard from '../ImageCard/ImageCard';
+import PaginatedPage from '../PaginatedPage';
+import { closeIcon } from '../../icons';
 
 interface SearchHistoryDetailProps {
   isOpen: boolean;
