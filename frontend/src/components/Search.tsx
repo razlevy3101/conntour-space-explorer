@@ -9,9 +9,7 @@ const Search: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
-
   const handleSearch = async () => {
-    debugger;
     const trimmedQuery = query.trim();
     if (!trimmedQuery) {
       setError('Please enter a search query.');
@@ -92,6 +90,7 @@ const Search: React.FC = () => {
           </div>
         )}
       </div>
+
     </div>
   );
 };

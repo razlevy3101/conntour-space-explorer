@@ -10,6 +10,12 @@ export interface Source {
 
 export interface SearchResult extends Source {
   confidence_score: number;
+}
+
+export interface SearchHistory {
+  id: number;
+  query: string;
   search_timestamp: string;
+  results: SearchResult[];
 }
 

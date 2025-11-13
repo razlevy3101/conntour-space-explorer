@@ -1,4 +1,3 @@
-from datetime import datetime
 import logging
 from typing import List
 
@@ -12,6 +11,9 @@ NAME_WEIGHT = 2.0
 DESCRIPTION_WEIGHT = 1.0
 
 
+"""
+Possible additions: if search has the word 'image' look for the type of the db obj and match score
+"""
 # def _score_source(keywords: List[str], source: DbSearchResult) -> float:
 #     """Score by giving points for each keyword match in name and description, while name is more important"""
 #     score = 0.0
@@ -21,9 +23,6 @@ DESCRIPTION_WEIGHT = 1.0
 #     return score
 
 
-"""
-Possible additions: if search has the word 'image' look for the type of the db obj and match score
-"""
 def _score_source(keywords: List[str], source: DbSearchResult) -> float:
     """Score by checking how many keywords are in the source data, return by percentage"""
     if " ".join(keywords).lower() == source.get("name", "").lower():
@@ -44,7 +43,6 @@ def score_sources(keywords: List[str], sources: List[DbSearchResult]) -> List[Se
         logger.debug("score_sources called with no keywords")
         return []
 
-    search_timestamp = datetime.now()
     scored_results: List[SearchResult] = []
 
     for source in sources:
@@ -56,7 +54,6 @@ def score_sources(keywords: List[str], sources: List[DbSearchResult]) -> List[Se
                 SearchResult(
                     **source_data,
                     confidence_score=score,
-                    search_timestamp=search_timestamp,
                 )
             )
 

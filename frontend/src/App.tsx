@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
 import Search from './components/Search';
 import Sources from './components/Sources';
+import SearchHistory from './components/SearchHistory';
+
+type ActivePage = 'search' | 'sources' | 'history';
 
 const App: React.FC = () => {
-  const [activePage, setActivePage] = useState<'search' | 'sources'>('search');
+  const [activePage, setActivePage] = useState<ActivePage>('search');
+
+  const pageMap: Record<ActivePage, JSX.Element> = {
+    search: <Search />,
+    sources: <Sources />,
+    history: <SearchHistory />,
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
@@ -38,11 +47,22 @@ const App: React.FC = () => {
               All Sources
             </button>
           </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => setActivePage('history')}
+              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                activePage === 'history'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-700 hover:bg-blue-50'
+              }`}
+            >
+              Search History
+            </button>
+          </li>
         </ul>
       </nav>
-      <main className="flex-1 p-8">
-        {activePage === 'search' ? <Search /> : <Sources />}
-      </main>
+      <main className="flex-1 p-8">{pageMap[activePage]}</main>
     </div>
   );
 };
