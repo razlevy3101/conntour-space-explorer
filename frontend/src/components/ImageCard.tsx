@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Source, SearchResult } from '../types';
-import { closeIcon } from './icons';
+import { closeIcon } from '../icons';
 
 type ImageCardItem = Source | SearchResult;
 

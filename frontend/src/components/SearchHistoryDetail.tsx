@@ -1,7 +1,8 @@
-import React from 'react';
-import { SearchHistory } from '../types';
+import React, { useCallback, useMemo } from 'react';
+import { PaginatedResponse, SearchHistory, SearchResult } from '../types';
 import ImageCard from './ImageCard';
-import { closeIcon } from './icons';
+import PaginatedPage from './PaginatedPage';
+import { closeIcon } from '../icons';
 
 interface SearchHistoryDetailProps {
   isOpen: boolean;
@@ -11,6 +12,8 @@ interface SearchHistoryDetailProps {
   onClose: () => void;
 }
 
+const ITEMS_PER_PAGE = 6;
+
 const SearchHistoryDetail: React.FC<SearchHistoryDetailProps> = ({
   isOpen,
   isLoading,
@@ -18,6 +21,31 @@ const SearchHistoryDetail: React.FC<SearchHistoryDetailProps> = ({
   error,
   onClose,
 }) => {
+  // Create a paginated fetch function from the in-memory results
+  const fetchPage = useCallback(async (page: number): Promise<PaginatedResponse<SearchResult>> => {
+    if (!history) {
+      throw new Error('No history data available');
+    }
+
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const items = history.results.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(history.results.length / ITEMS_PER_PAGE);
+
+    return {
+      items,
+      total: history.results.length,
+      page,
+      size: ITEMS_PER_PAGE,
+      pages: totalPages,
+    };
+  }, [history]);
+
+  // Use a key to force re-render when history changes
+  const paginationKey = useMemo(() => {
+    return history ? `history-${history.id}` : 'no-history';
+  }, [history]);
+
   if (!isOpen) {
     return null;
   }
@@ -55,17 +83,19 @@ const SearchHistoryDetail: React.FC<SearchHistoryDetailProps> = ({
         )}
 
         {!isLoading && !error && history && (
-          <>
-            {history.results.length === 0 ? (
-              <div className="text-gray-600">This search did not return any results.</div>
-            ) : (
+          <PaginatedPage<SearchResult>
+            key={paginationKey}
+            fetchPage={fetchPage}
+            noResultsMessage="This search did not return any results."
+          >
+            {(results) => (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {history.results.map((result) => (
+                {results.map((result) => (
                   <ImageCard key={result.id} image={result} />
                 ))}
               </div>
             )}
-          </>
+          </PaginatedPage>
         )}
       </div>
     </div>

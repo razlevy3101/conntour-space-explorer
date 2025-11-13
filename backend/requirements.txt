@@ -4,3 +4,4 @@ python-dotenv==1.0.0
 flasgger==0.9.5
 fastapi
 uvicorn[standard]
+fastapi-pagination
