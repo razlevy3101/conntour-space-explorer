@@ -12,7 +12,9 @@ DESCRIPTION_WEIGHT = 1.0
 
 
 """
-Possible additions: if search has the word 'image' look for the type of the db obj and match score
+Possible additions: 
+* if search has the word 'image' look for the type of the db obj and match score
+* search has a date in it
 """
 # def _score_source(keywords: List[str], source: DbSearchResult) -> float:
 #     """Score by giving points for each keyword match in name and description, while name is more important"""

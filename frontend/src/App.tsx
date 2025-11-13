@@ -37,19 +37,6 @@ const App: React.FC = () => {
           <li>
             <button
               type="button"
-              onClick={() => setActivePage('sources')}
-              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
-                activePage === 'sources'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-blue-50'
-              }`}
-            >
-              All Sources
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
               onClick={() => setActivePage('history')}
               className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
                 activePage === 'history'
@@ -58,6 +45,19 @@ const App: React.FC = () => {
               }`}
             >
               Search History
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => setActivePage('sources')}
+              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                activePage === 'sources'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-700 hover:bg-blue-50'
+              }`}
+            >
+              All Sources
             </button>
           </li>
         </ul>

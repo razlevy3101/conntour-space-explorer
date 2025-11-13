@@ -1,6 +1,7 @@
 import React from 'react';
 import { SearchHistory } from '../types';
 import ImageCard from './ImageCard';
+import { closeIcon } from './icons';
 
 interface SearchHistoryDetailProps {
   isOpen: boolean;
@@ -24,14 +25,16 @@ const SearchHistoryDetail: React.FC<SearchHistoryDetailProps> = ({
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-40 px-4">
       <div className="relative w-full max-w-4xl rounded-lg bg-white p-6 shadow-lg max-h-[90vh] overflow-y-auto">
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          Close
-        </button>
-
+        <div className="sticky top-0 z-10 -mx-6 -mt-6 mb-2 flex justify-end bg-transparent px-6 pt-6">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full bg-white p-2 text-gray-500 shadow-sm hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-label="Close search history detail"
+          >
+            {closeIcon}
+          </button>
+        </div>
         <h1 className="text-3xl font-bold text-gray-800 mb-1">Search History Detail</h1>
         {history && (
           <p className="text-sm text-gray-500 mb-6">
