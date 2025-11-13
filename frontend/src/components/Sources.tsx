@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
-interface Source {
-  id: number;
-  name: string;
-  description: string;
-  launch_date: string;
-  image_url: string;
-  type: string;
-  status: string;
-}
+import { Source } from '../types';
+import ImageCard from './ImageCard';
 
 const Sources: React.FC = () => {
   const [images, setImages] = useState<Source[]>([]);
@@ -46,32 +38,7 @@ const Sources: React.FC = () => {
       <h1 className="text-3xl font-bold mb-8">NASA Space Images</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {images.map((image) => (
-          <div key={image.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
-            {image.image_url && (
-              <img
-                src={image.image_url}
-                alt={image.name}
-                className="w-full h-48 object-cover"
-              />
-            )}
-            <div className="p-4">
-              <h2 className="text-xl font-semibold mb-2">{image.name}</h2>
-              <p className="text-gray-600 mb-2 line-clamp-3">{image.description}</p>
-              <p className="text-sm text-gray-500 mb-4">
-                {image.launch_date && new Date(image.launch_date).toLocaleDateString()}
-              </p>
-              {image.image_url && (
-                <a
-                  href={image.image_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-                >
-                  View Full Image
-                </a>
-              )}
-            </div>
-          </div>
+          <ImageCard key={image.id} image={image} />
         ))}
       </div>
     </div>

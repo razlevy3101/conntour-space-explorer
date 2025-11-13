@@ -21,6 +21,9 @@ DESCRIPTION_WEIGHT = 1.0
 #     return score
 
 
+"""
+Possible additions: if search has the word 'image' look for the type of the db obj and match score
+"""
 def _score_source(keywords: List[str], source: DbSearchResult) -> float:
     """Score by checking how many keywords are in the source data, return by percentage"""
     if " ".join(keywords).lower() == source.get("name", "").lower():
