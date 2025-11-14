@@ -1,41 +1,27 @@
-import React, { useCallback, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import ImageCard from '../ImageCard/ImageCard';
+import { SearchResult } from '../../types';
+import { useSearch } from '../../hooks/useSearch';
+import { ErrorMessage } from '../QueryStatus';
 import PaginatedPage from '../PaginatedPage';
-import { PaginatedResponse, SearchResult } from '../../types';
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState('');
   const [activeQuery, setActiveQuery] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchTrigger, setSearchTrigger] = useState(0);
-
-  const fetchResults = useCallback(async (page: number): Promise<PaginatedResponse<SearchResult>> => {
-    if (!activeQuery) {
-      throw new Error('No search query provided.');
-    }
-
-    const response = await axios.get<PaginatedResponse<SearchResult>>('/api/search', {
-      params: { query: activeQuery, page },
-    });
-    return response.data;
-  }, [activeQuery]);
+  const [searchKey, setSearchKey] = useState(0);
 
   const handleSearch = () => {
     const trimmedQuery = query.trim();
     if (!trimmedQuery) {
       setError('Please enter a search query.');
-      setHasSearched(false);
       setActiveQuery('');
       return;
     }
 
     setError(null);
-    setHasSearched(true);
     setActiveQuery(trimmedQuery);
-    // Increment trigger to force PaginatedPage component to refetch
-    setSearchTrigger(prev => prev + 1);
+    setSearchKey((prev) => prev + 1); // Force PaginatedPage to reset to page 1
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -43,6 +29,10 @@ const Search: React.FC = () => {
       handleSearch();
     }
   };
+
+  // Create a hook wrapper that follows React Hooks rules
+  const useSearchWithQuery = (page: number, size: number) =>
+    useSearch(activeQuery, page, size, !!activeQuery);
 
   return (
     <div className="h-full">
@@ -68,14 +58,15 @@ const Search: React.FC = () => {
             Search
           </button>
         </div>
-        {error && <div className="mb-4 rounded-md bg-red-100 px-4 py-2 text-red-700">{error}</div>}
+        {error && <ErrorMessage message={error} />}
       </div>
 
       <div className="mt-6">
-        {hasSearched && activeQuery && (
+        {activeQuery && (
           <PaginatedPage<SearchResult>
-            fetchPage={fetchResults}
-            deps={[searchTrigger]}
+            key={searchKey}
+            useQueryHook={useSearchWithQuery}
+            pageSize={10}
             noResultsMessage="No results found. Try different keywords."
           >
             {(results) => (

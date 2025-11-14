@@ -1,23 +1,17 @@
-import React, { useCallback } from 'react';
-import axios from 'axios';
-import { PaginatedResponse, Source } from '../../types';
+import React from 'react';
 import ImageCard from '../ImageCard/ImageCard';
 import PaginatedPage from '../PaginatedPage';
+import { useSources } from '../../hooks/useSources';
+import { Source } from '../../types';
 
 const Sources: React.FC = () => {
-  const fetchSourcesPage = useCallback(async (page: number): Promise<PaginatedResponse<Source>> => {
-    const response = await axios.get<PaginatedResponse<Source>>('/api/sources', {
-      params: { page },
-    });
-    return response.data;
-  }, []);
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">NASA Space Images</h1>
       
       <PaginatedPage<Source>
-        fetchPage={fetchSourcesPage}
+        useQueryHook={useSources}
+        pageSize={10}
         noResultsMessage="No sources available."
       >
         {(sources) => (

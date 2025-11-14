@@ -1,55 +1,43 @@
-import React, { useCallback, useState } from 'react';
-import axios from 'axios';
-import { PaginatedResponse, SearchHistory as SearchHistoryType } from '../../types';
+import React, { useState } from 'react';
+import { SearchHistory as SearchHistoryType } from '../../types';
 import { eyeIcon, trashIcon } from '../../icons';
 import PaginatedPage from '../PaginatedPage';
 import SearchHistoryDetail from './SearchHistoryDetail';
+import { useSearchHistory } from '../../hooks/useSearchHistory';
+import { useDeleteSearchHistory } from '../../hooks/useSearchHistoryMutations';
+import { useSearchHistoryDetail } from '../../hooks/useSearchHistoryDetail';
 
 const SearchHistory: React.FC = () => {
   const [deleteCandidate, setDeleteCandidate] = useState<SearchHistoryType | null>(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [detailLoading, setDetailLoading] = useState(false);
-  const [detailError, setDetailError] = useState<string | null>(null);
-  const [detailHistory, setDetailHistory] = useState<SearchHistoryType | null>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [selectedHistoryId, setSelectedHistoryId] = useState<number | null>(null);
 
-  const fetchHistoryPage = useCallback(async (page: number): Promise<PaginatedResponse<SearchHistoryType>> => {
-    const response = await axios.get<PaginatedResponse<SearchHistoryType>>('/api/search-history', {
-      params: { page },
-    });
-    return response.data;
-  }, []);
+  const deleteMutation = useDeleteSearchHistory();
+  
+  // Fetch detail only when a history is selected
+  const { 
+    data: detailHistory, 
+    isLoading: detailLoading, 
+    error: detailError 
+  } = useSearchHistoryDetail(selectedHistoryId, selectedHistoryId !== null);
 
   const confirmDelete = async () => {
     if (!deleteCandidate) {
       return;
     }
-    try {
-      await axios.delete(`/api/search-history/${deleteCandidate.id}`);
-      setDeleteError(null);
-      setDeleteCandidate(null);
-      // Trigger a refresh of the pagination component
-      setRefreshTrigger(prev => prev + 1);
-    } catch (err) {
-      setDeleteError('Failed to delete search history entry.');
-    }
+    
+    deleteMutation.mutate(deleteCandidate.id, {
+      onSuccess: () => {
+        setDeleteCandidate(null);
+      },
+    });
   };
 
-  const openHistoryDetail = async (historyId: number) => {
-    setIsDetailOpen(true);
-    setDetailLoading(true);
-    setDetailError(null);
-    setDetailHistory(null);
+  const openHistoryDetail = (historyId: number) => {
+    setSelectedHistoryId(historyId);
+  };
 
-    try {
-      const response = await axios.get<SearchHistoryType>(`/api/search-history/${historyId}`);
-      setDetailHistory(response.data);
-    } catch (err) {
-      setDetailError('Failed to load search history detail.');
-    } finally {
-      setDetailLoading(false);
-    }
+  const closeHistoryDetail = () => {
+    setSelectedHistoryId(null);
   };
 
   return (
@@ -59,15 +47,15 @@ const SearchHistory: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-800">Search History</h1>
         </div>
 
-        {deleteError && (
+        {deleteMutation.isError && (
           <div className="mb-4 rounded-md bg-yellow-100 px-4 py-2 text-yellow-800">
-            {deleteError}
+            Failed to delete search history entry.
           </div>
         )}
 
         <PaginatedPage<SearchHistoryType>
-          fetchPage={fetchHistoryPage}
-          deps={[refreshTrigger]}
+          useQueryHook={useSearchHistory}
+          pageSize={10}
           noResultsMessage="No search history yet. Run a search to see it here."
         >
           {(historyItems) => (
@@ -146,15 +134,11 @@ const SearchHistory: React.FC = () => {
       )}
 
       <SearchHistoryDetail
-        isOpen={isDetailOpen}
+        isOpen={selectedHistoryId !== null}
         isLoading={detailLoading}
-        history={detailHistory}
-        error={detailError}
-        onClose={() => {
-          setIsDetailOpen(false);
-          setDetailHistory(null);
-          setDetailError(null);
-        }}
+        history={detailHistory || null}
+        error={detailError ? (detailError as Error).message : null}
+        onClose={closeHistoryDetail}
       />
     </>
   );

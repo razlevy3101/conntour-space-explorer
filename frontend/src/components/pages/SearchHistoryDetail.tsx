@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
-import { PaginatedResponse, SearchHistory, SearchResult } from '../../types';
+import React from 'react';
+import { SearchHistory, SearchResult } from '../../types';
 import ImageCard from '../ImageCard/ImageCard';
 import PaginatedPage from '../PaginatedPage';
+import { useClientSidePagination } from '../../hooks/useClientSidePagination';
 import { closeIcon } from '../../icons';
 
 interface SearchHistoryDetailProps {
@@ -21,30 +22,14 @@ const SearchHistoryDetail: React.FC<SearchHistoryDetailProps> = ({
   error,
   onClose,
 }) => {
-  // Create a paginated fetch function from the in-memory results
-  const fetchPage = useCallback(async (page: number): Promise<PaginatedResponse<SearchResult>> => {
-    if (!history) {
-      throw new Error('No history data available');
-    }
-
-    const startIndex = (page - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const items = history.results.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(history.results.length / ITEMS_PER_PAGE);
-
-    return {
-      items,
-      total: history.results.length,
+  const useSearchHistoryDetailPagination = (page: number, size: number) => 
+    useClientSidePagination(
+      history?.results,
       page,
-      size: ITEMS_PER_PAGE,
-      pages: totalPages,
-    };
-  }, [history]);
-
-  // Use a key to force re-render when history changes
-  const paginationKey = useMemo(() => {
-    return history ? `history-${history.id}` : 'no-history';
-  }, [history]);
+      size,
+      isLoading,
+      error ? new Error(error) : null
+    );
 
   if (!isOpen) {
     return null;
@@ -70,33 +55,19 @@ const SearchHistoryDetail: React.FC<SearchHistoryDetailProps> = ({
           </p>
         )}
 
-        {isLoading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        )}
-
-        {error && (
-          <div className="rounded-md bg-red-100 px-4 py-2 text-red-700">
-            {error}
-          </div>
-        )}
-
-        {!isLoading && !error && history && (
-          <PaginatedPage<SearchResult>
-            key={paginationKey}
-            fetchPage={fetchPage}
-            noResultsMessage="This search did not return any results."
-          >
-            {(results) => (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {results.map((result) => (
-                  <ImageCard key={result.id} image={result} />
-                ))}
-              </div>
-            )}
-          </PaginatedPage>
-        )}
+        <PaginatedPage<SearchResult>
+          useQueryHook={useSearchHistoryDetailPagination}
+          pageSize={ITEMS_PER_PAGE}
+          noResultsMessage="This search did not return any results."
+        >
+          {(results) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {results.map((result) => (
+                <ImageCard key={result.id} image={result} />
+              ))}
+            </div>
+          )}
+        </PaginatedPage>
       </div>
     </div>
   );
