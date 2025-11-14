@@ -3,6 +3,7 @@ import ImageCard from '../ImageCard/ImageCard';
 import PaginatedPage from '../PaginatedPage';
 import { useSources } from '../../hooks/useSources';
 import { Source } from '../../types';
+import { DEFAULT_PAGE_SIZE } from '../../consts';
 
 const Sources: React.FC = () => {
   return (
@@ -11,7 +12,7 @@ const Sources: React.FC = () => {
       
       <PaginatedPage<Source>
         useQueryHook={useSources}
-        pageSize={10}
+        pageSize={DEFAULT_PAGE_SIZE}
         noResultsMessage="No sources available."
       >
         {(sources) => (

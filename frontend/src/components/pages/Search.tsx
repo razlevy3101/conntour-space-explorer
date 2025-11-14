@@ -4,6 +4,7 @@ import { SearchResult } from '../../types';
 import { useSearch } from '../../hooks/useSearch';
 import { ErrorMessage } from '../QueryStatus';
 import PaginatedPage from '../PaginatedPage';
+import { DEFAULT_PAGE_SIZE } from '../../consts';
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -30,7 +31,6 @@ const Search: React.FC = () => {
     }
   };
 
-  // Create a hook wrapper that follows React Hooks rules
   const useSearchWithQuery = (page: number, size: number) =>
     useSearch(activeQuery, page, size, !!activeQuery);
 
@@ -66,7 +66,7 @@ const Search: React.FC = () => {
           <PaginatedPage<SearchResult>
             key={searchKey}
             useQueryHook={useSearchWithQuery}
-            pageSize={10}
+            pageSize={DEFAULT_PAGE_SIZE}
             noResultsMessage="No results found. Try different keywords."
           >
             {(results) => (

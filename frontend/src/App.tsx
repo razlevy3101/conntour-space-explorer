@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Search from './components/pages/Search';
 import Sources from './components/pages/Sources';
-import SearchHistory from './components/pages/SearchHistory';
+import SearchHistory from './components/pages/SearchHistory/SearchHistory';
 
 type ActivePage = 'search' | 'sources' | 'history';
 

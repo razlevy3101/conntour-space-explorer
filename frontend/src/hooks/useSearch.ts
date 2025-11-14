@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { PaginatedResponse, SearchResult } from '../types';
-import { QUERY_KEYS } from '../consts';
+import { QUERY_KEYS, DEFAULT_PAGE_SIZE } from '../consts';
 
 const fetchSearchResults = async (
   query: string,
@@ -18,7 +18,7 @@ const fetchSearchResults = async (
 export const useSearch = (
   query: string,
   page: number,
-  size: number = 10,
+  size: number = DEFAULT_PAGE_SIZE,
   enabled: boolean = true
 ) => {
   const queryClient = useQueryClient();

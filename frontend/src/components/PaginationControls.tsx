@@ -16,11 +16,16 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
   const hasPreviousPage = currentPage > 1;
   const hasNextPage = currentPage < totalPages;
 
+  const handlePageChange = (newPage: number) => {
+    onPageChange(newPage);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+
   return (
     <div className="mt-6 flex justify-center gap-4 items-center">
       <button
         type="button"
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => handlePageChange(currentPage - 1)}
         disabled={!hasPreviousPage || isLoading}
         className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
       >
@@ -34,7 +39,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
       </span>
       <button
         type="button"
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => handlePageChange(currentPage + 1)}
         disabled={!hasNextPage || isLoading}
         className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
       >

@@ -31,20 +31,15 @@ db = SpaceDB()
 search_history_db = SearchHistoryDB()
 
 
-# TODO: handle when client sents size > max_size
-# Custom Params with default size
 def pagination_params(
     page: int = 1,
     size: int = 10,
-    max_size: int = 50,
 ) -> Params:
-    return Params(page=page, size=size, max_size=max_size)
+    return Params(page=page, size=size)
 
 
 @app.get("/api/sources", response_model=Page[Source])
 def get_sources(params: Params = Depends(pagination_params)):
-    # return paginate([], params)
-    # import time; time.sleep(1)
     sources = db.get_all_sources()
     logger.info(f"Fetched {len(sources)} sources - Page: {params.page}, Size: {params.size}")
     return paginate(sources, params)

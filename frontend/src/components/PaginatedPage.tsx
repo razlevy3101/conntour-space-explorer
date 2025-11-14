@@ -3,6 +3,7 @@ import { UseQueryResult } from '@tanstack/react-query';
 import { PaginatedResponse } from '../types';
 import { LoadingSpinner, ErrorMessage, EmptyState } from './QueryStatus';
 import { PaginationControls } from './PaginationControls';
+import { DEFAULT_PAGE_SIZE } from '../consts';
 
 type PaginatedHook<T> = (page: number, size: number) => UseQueryResult<PaginatedResponse<T>>;
 
@@ -16,7 +17,7 @@ interface PaginatedPageProps<T> {
 
 function PaginatedPage<T>({
   useQueryHook,
-  pageSize = 10,
+  pageSize = DEFAULT_PAGE_SIZE,
   children,
   initialPage = 1,
   noResultsMessage = 'No results found.',

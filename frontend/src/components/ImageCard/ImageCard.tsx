@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { Source, SearchResult } from '../../types';
+import { DescriptionModal } from './DescriptionModal';
+import DataBadges from './DataBadges';
 
 type ImageCardItem = Source | SearchResult;
 
@@ -13,10 +15,10 @@ const isSearchResult = (item: ImageCardItem): item is SearchResult => {
 };
 
 const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
+  const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
   const description = image.description ?? '';
   const hasDescription = description.trim().length > 0;
   const tooltipId = `tooltip-${image.id}`;
-  const descriptionTooltipId = `tooltip-description-${image.id}`;
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -62,29 +64,26 @@ const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
           <>
             <button
               type="button"
-              className="w-full text-left text-gray-600 mb-2 line-clamp-3 focus:outline-none hover:text-gray-800 cursor-help"
+              className="w-full text-left text-gray-600 mb-2 line-clamp-3 focus:outline-none hover:text-gray-800 cursor-pointer"
+              onClick={() => setIsDescriptionModalOpen(true)}
               aria-label="View full description"
-              data-tooltip-id={descriptionTooltipId}
-              data-tooltip-content={description}
             >
               {description}
             </button>
-            <Tooltip 
-              id={descriptionTooltipId} 
-              place="top"
-              style={{ 
-                backgroundColor: '#1f2937', 
-                color: '#fff',
-                maxWidth: '300px',
-                wordWrap: 'break-word',
-                zIndex: 50
-              }}
-            />
+            {isDescriptionModalOpen && (
+              <DescriptionModal
+                description={description}
+                onClose={() => setIsDescriptionModalOpen(false)}
+              />
+            )}
           </>
         )}
-        <p className="text-sm text-gray-500 mb-4">
-          {image.launch_date && new Date(image.launch_date).toLocaleDateString()}
-        </p>
+        <div className="space-y-2">
+          <DataBadges type={image.type} status={image.status} />
+          <p className="text-sm text-gray-500">
+            {image.launch_date && new Date(image.launch_date).toLocaleDateString()}
+          </p>
+        </div>
       </div>
     </div>
   );

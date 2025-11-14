@@ -6,3 +6,5 @@ export const QUERY_KEYS = {
   SOURCES: 'sources',
 } as const;
 
+export const DEFAULT_PAGE_SIZE = 10;
+

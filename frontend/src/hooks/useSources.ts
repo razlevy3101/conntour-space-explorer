@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { PaginatedResponse, Source } from '../types';
 import { usePaginatedQuery } from './usePaginatedQuery';
-import { QUERY_KEYS } from '../consts';
+import { QUERY_KEYS, DEFAULT_PAGE_SIZE } from '../consts';
 
 const fetchSources = async (page: number, size: number): Promise<PaginatedResponse<Source>> => {
   const response = await axios.get<PaginatedResponse<Source>>('/api/sources', {
@@ -10,7 +10,7 @@ const fetchSources = async (page: number, size: number): Promise<PaginatedRespon
   return response.data;
 };
 
-export const useSources = (page: number, size: number = 10) =>
+export const useSources = (page: number, size: number = DEFAULT_PAGE_SIZE) =>
   usePaginatedQuery({
     queryKey: QUERY_KEYS.SOURCES,
     fetchFn: fetchSources,

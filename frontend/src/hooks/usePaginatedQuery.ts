@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { PaginatedResponse } from '../types';
+import { DEFAULT_PAGE_SIZE } from '../consts';
 
 interface UsePaginatedQueryOptions<T> {
   queryKey: string;
@@ -15,7 +16,7 @@ export function usePaginatedQuery<T>({
   queryKey,
   fetchFn,
   page,
-  size = 10,
+  size = DEFAULT_PAGE_SIZE,
   enabled = true,
 }: UsePaginatedQueryOptions<T>) {
   const queryClient = useQueryClient();

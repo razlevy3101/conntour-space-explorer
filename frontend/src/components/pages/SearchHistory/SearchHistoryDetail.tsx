@@ -1,9 +1,9 @@
 import React from 'react';
-import { SearchHistory, SearchResult } from '../../types';
-import ImageCard from '../ImageCard/ImageCard';
-import PaginatedPage from '../PaginatedPage';
-import { useClientSidePagination } from '../../hooks/useClientSidePagination';
-import { closeIcon } from '../../icons';
+import { SearchHistory, SearchResult } from '../../../types';
+import ImageCard from '../../ImageCard/ImageCard';
+import PaginatedPage from '../../PaginatedPage';
+import { useClientSidePagination } from '../../../hooks/useClientSidePagination';
+import { closeIcon } from '../../../icons';
 
 interface SearchHistoryDetailProps {
   isOpen: boolean;
